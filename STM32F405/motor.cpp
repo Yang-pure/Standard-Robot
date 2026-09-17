@@ -146,10 +146,6 @@ void Motor::Ontimer(uint8_t idata[][8], uint8_t* odata)//idate: receive;odate: t
 	//速度环
 	else if (mode == SPD)
 	{
-		/*if (type == M2006 && (ID == ID6 || ID == ID7))
-		{
-			current = 1000;
-		}*/
 		setcurrent = pid[speed].Position(setspeed - curspeed, pid[speed].max_limit);
 		current = setcurrent;
 	}
