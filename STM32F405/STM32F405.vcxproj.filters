@@ -642,9 +642,6 @@
     <ClCompile Include="control.cpp">
       <Filter>Source files\Src\user</Filter>
     </ClCompile>
-    <ClCompile Include="CRC.cpp">
-      <Filter>Source files\Src\user</Filter>
-    </ClCompile>
     <ClCompile Include="label.cpp">
       <Filter>Source files\Src\user</Filter>
     </ClCompile>
@@ -713,9 +710,6 @@
     <ClInclude Include="stm32f4xx_hal_conf.h">
       <Filter>Header files\Inc</Filter>
     </ClInclude>
-    <ClInclude Include="arm.h">
-      <Filter>Header files\Inc\device</Filter>
-    </ClInclude>
     <ClInclude Include="HTmotor.h">
       <Filter>Header files\Inc\device</Filter>
     </ClInclude>
@@ -747,6 +741,9 @@
     </ClCompile>
     <ClCompile Include="supercap.cpp">
       <Filter>Source files\Src\device</Filter>
+    </ClCompile>
+    <ClCompile Include="CRC.cpp">
+      <Filter>Source files\Src\basic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

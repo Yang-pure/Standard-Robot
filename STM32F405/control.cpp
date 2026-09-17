@@ -33,6 +33,25 @@ void CONTROL::Init(std::vector<Motor*> motor)
 		pantile_motor[PANTILE::TYPE::YAW]->setangle = para.initial_yaw;
 }
 
+void CONTROL::Control_Chassis(float speedx, float speedy, float speedz)
+
+{
+	
+	const int32_t wheel_speed[4] = {
+		static_cast<int32_t>(+speedx + speedy -  speedz), // ID1 后右  后右
+		static_cast<int32_t>(+speedx - speedy -  speedz), // ID2 后左  前右
+		static_cast<int32_t>(-speedx - speedy -  speedz), // ID3 前左  前左
+		static_cast<int32_t>(-speedx + speedy -  speedz)  // ID4 前右  后左*/
+	};
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (chassis_motor[i] == nullptr) continue;
+		chassis_motor[i]->setspeed =
+			std::max(-para.max_speed, std::min(para.max_speed, wheel_speed[i]));
+	}
+	return ;
+}
 
 void CONTROL::Control_Pantile(int32_t ch_yaw, int32_t ch_pitch)
 {
@@ -52,7 +71,7 @@ void CONTROL::CHASSIS::Keep_Direction()
 
 void CONTROL::CHASSIS::Update()
 {
-
+	ctrl.Control_Chassis(speedx, speedy, speedz);
 }
 
 void CONTROL::PANTILE::Update()

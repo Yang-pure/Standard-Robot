@@ -142,6 +142,8 @@ void Motor::Ontimer(uint8_t idata[][8], uint8_t* odata)//idate: receive;odate: t
 	else if (mode == POS)
 	{
 		setspeed = pid[position].Position(setangle - angle[now], pid[position].max_limit);
+		setcurrent = pid[speed].Position(setspeed - curspeed, pid[speed].max_limit);
+		current = setcurrent;
 	}
 	//速度环
 	else if (mode == SPD)

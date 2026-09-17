@@ -59,6 +59,7 @@ public:
 	
 	static int16_t Setrange(const int16_t original, const int16_t range);
 	void Control_Pantile(int32_t ch_yaw, int32_t ch_pitch);
+	void Control_Chassis(float speedx, float speedy, float speedz);
 	float GetDelta(float delta);
 	void Init(std::vector<Motor*> motor);
 	void init_dm();

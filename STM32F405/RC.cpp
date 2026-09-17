@@ -92,6 +92,11 @@ void RC::RC_Control() {
 		switch (ctrl.mode)
 		{
 		case CONTROL::ROTATION:
+		{
+			ctrl.chassis.speedx = rc.ch[0] * para.max_speed / 660.f;
+			ctrl.chassis.speedy = rc.ch[1] * para.max_speed / 660.f;
+			ctrl.chassis.speedz = 0;
+		}
 
 			break;
 
