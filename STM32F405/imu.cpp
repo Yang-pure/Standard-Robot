@@ -11,10 +11,10 @@ void IMU::Init(UART* huart, USART_TypeDef* Instance, const uint32_t BaudRate, IM
 void IMU::Decode()
 {
 	if (queueHandler == NULL || *queueHandler == NULL) {
-		return;  // »òÕß±¨´í
+		return;  // æˆ–è€…æŠ¥é”™
 	}
 	else {
-		pd_Rx = xQueueReceive(*queueHandler, rxData, NULL);
+		pd_Rx = xQueueReceive(*queueHandler, rxData, 0);
 	}
 
 	if (type == IMU601)
@@ -119,11 +119,10 @@ float IMU::GetAngleRoll()
 
 float* IMU::GetAcceleration()
 {
-	float temp[3]{};
-	temp[0] = acceleration.x;
-	temp[1] = acceleration.y;
-	temp[2] = acceleration.z;
-	return temp;
+	accelerationData[0] = acceleration.x;
+	accelerationData[1] = acceleration.y;
+	accelerationData[2] = acceleration.z;
+	return accelerationData;
 }
 
 bool IMU::Check(uint8_t* pdata, uint8_t len, uint32_t com)
@@ -137,7 +136,7 @@ bool IMU::Check(uint8_t* pdata, uint8_t len, uint32_t com)
 		}
 		return t == com;
 	}
-	else if (type == CH010)
+	else if (type == CH010 || type == HI226)
 	{
 		for (int j = 0; j < len; ++j)
 		{
@@ -156,6 +155,7 @@ bool IMU::Check(uint8_t* pdata, uint8_t len, uint32_t com)
 		}
 		return crc == com;
 	}
+	return false;
 }
 
 

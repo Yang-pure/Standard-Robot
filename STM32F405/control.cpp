@@ -27,8 +27,10 @@ void CONTROL::Init(std::vector<Motor*> motor)
 			break;
 		}
 	}
-	pantile_motor[PANTILE::TYPE::PITCH]->setangle = para.initial_pitch;
-	pantile_motor[PANTILE::TYPE::YAW]->setangle = para.initial_yaw;
+	if (pantile_motor[PANTILE::TYPE::PITCH] != nullptr)
+		pantile_motor[PANTILE::TYPE::PITCH]->setangle = para.initial_pitch;
+	if (pantile_motor[PANTILE::TYPE::YAW] != nullptr)
+		pantile_motor[PANTILE::TYPE::YAW]->setangle = para.initial_yaw;
 }
 
 

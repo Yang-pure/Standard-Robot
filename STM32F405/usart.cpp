@@ -25,51 +25,51 @@
 
 UART& UART::Init(USART_TypeDef* Instance, const uint32_t BaudRate)
 {
-	huart.Instance = Instance;								//ÉèÖÃ´®¿ÚÍ¨µÀ
-	huart.Init.BaudRate = BaudRate;							//ÉèÖÃ²¨ÌØÂÊ
-	huart.Init.WordLength = UART_WORDLENGTH_8B;				//´«ÊäÊı¾İ×Ö³¤£¬8Î»
-	huart.Init.StopBits = UART_STOPBITS_1;					//Í£Ö¹Î»×Ö³¤£¬1Î»
-	huart.Init.Parity = UART_PARITY_NONE;					//ÎŞÆæÅ¼Ğ§ÑéÎ»
-	huart.Init.Mode = UART_MODE_TX_RX;						//ÊÕ·¢Ä£Ê½
-	huart.Init.HwFlowCtl = UART_HWCONTROL_NONE;				//ÎŞÓ²¼şÁ÷
-	huart.Init.OverSampling = UART_OVERSAMPLING_16;			//16±¶¹ı²ÉÑù£¬È¥³ı¸ÉÈÅ
-	HAL_UART_Init(&huart);									//µ÷ÓÃHAL¿â³õÊ¼»¯º¯Êı
+	huart.Instance = Instance;								//è®¾ç½®ä¸²å£é€šé“
+	huart.Init.BaudRate = BaudRate;							//è®¾ç½®æ³¢ç‰¹ç‡
+	huart.Init.WordLength = UART_WORDLENGTH_8B;				//ä¼ è¾“æ•°æ®å­—é•¿ï¼Œ8ä½
+	huart.Init.StopBits = UART_STOPBITS_1;					//åœæ­¢ä½å­—é•¿ï¼Œ1ä½
+	huart.Init.Parity = UART_PARITY_NONE;					//æ— å¥‡å¶æ•ˆéªŒä½
+	huart.Init.Mode = UART_MODE_TX_RX;						//æ”¶å‘æ¨¡å¼
+	huart.Init.HwFlowCtl = UART_HWCONTROL_NONE;				//æ— ç¡¬ä»¶æµ
+	huart.Init.OverSampling = UART_OVERSAMPLING_16;			//16å€è¿‡é‡‡æ ·ï¼Œå»é™¤å¹²æ‰°
+	HAL_UART_Init(&huart);									//è°ƒç”¨HALåº“åˆå§‹åŒ–å‡½æ•°
 	return *this;
 }
 
 UART& UART::DMATxInit(void)
 {
-	__HAL_DMA_DISABLE(huart.hdmatx);						//Çå³ı´®¿ÚDMA·¢ËÍ
-	huart.hdmatx->Instance->PAR = reinterpret_cast<uint32_t>(&huart.Instance->DR);//Ğ´ÈëDMAÍâÉèµØÖ·
-	huart.hdmatx->Instance->M0AR = 0;						//0ºÅ´æ´¢Æ÷
+	__HAL_DMA_DISABLE(huart.hdmatx);						//æ¸…é™¤ä¸²å£DMAå‘é€
+	huart.hdmatx->Instance->PAR = reinterpret_cast<uint32_t>(&huart.Instance->DR);//å†™å…¥DMAå¤–è®¾åœ°å€
+	huart.hdmatx->Instance->M0AR = 0;						//0å·å­˜å‚¨å™¨
 	DMAClearAllFlags(huart.hdmatx);
-	__HAL_DMA_ENABLE_IT(huart.hdmatx, DMA_IT_TC);			//¿ªÆô´®¿ÚDMA·¢ËÍ
-	SET_BIT(huart.Instance->CR3, USART_CR3_DMAT);			//ÉèÖÃ¿ØÖÆÆ÷3£¬Ê¹ÄÜDMA
+	__HAL_DMA_ENABLE_IT(huart.hdmatx, DMA_IT_TC);			//å¼€å¯ä¸²å£DMAå‘é€
+	SET_BIT(huart.Instance->CR3, USART_CR3_DMAT);			//è®¾ç½®æ§åˆ¶å™¨3ï¼Œä½¿èƒ½DMA
 	return *this;
 }
 
 
 UART& UART::DMARxInit(const uint8_t* buffer, const uint32_t size)//size = UART_MAX_LEN
 {
-	__HAL_DMA_DISABLE(huart.hdmarx);						//Ê§ÄÜ´®¿ÚDMA½ÓÊÕ
+	__HAL_DMA_DISABLE(huart.hdmarx);						//å¤±èƒ½ä¸²å£DMAæ¥æ”¶
 	huart.hdmarx->Instance->PAR = reinterpret_cast<uint32_t>(&huart.Instance->DR);
 	//PAR is DMA stream x peripheral address register,DR is UART Date register address
-	huart.hdmarx->Instance->NDTR = size;					//ÉèÖÃ´®¿ÚÊı¾İ³¤¶È
-	if (buffer == nullptr)									//ÉèÖÃ»º³åÇø
+	huart.hdmarx->Instance->NDTR = size;					//è®¾ç½®ä¸²å£æ•°æ®é•¿åº¦
+	if (buffer == nullptr)									//è®¾ç½®ç¼“å†²åŒº
 		buffer = m_uartrx;
-	huart.hdmarx->Instance->M0AR = reinterpret_cast<uint32_t>(buffer);//ÉèÖÃ´æ´¢Æ÷0µØÖ·
+	huart.hdmarx->Instance->M0AR = reinterpret_cast<uint32_t>(buffer);//è®¾ç½®å­˜å‚¨å™¨0åœ°å€
 	DMAClearAllFlags(huart.hdmarx);
-	__HAL_DMA_ENABLE(huart.hdmarx);							//Ê¹ÄÜ´®¿ÚDMA½ÓÊÕ	
+	__HAL_DMA_ENABLE(huart.hdmarx);							//ä½¿èƒ½ä¸²å£DMAæ¥æ”¶
 	SET_BIT(huart.Instance->CR3, USART_CR3_DMAR);
 
-	__HAL_UART_CLEAR_PEFLAG(&huart);						//¿ªÆô´®¿Ú¿ÕÏĞÖĞ¶Ï
+	__HAL_UART_CLEAR_PEFLAG(&huart);						//å¼€å¯ä¸²å£ç©ºé—²ä¸­æ–­
 	__HAL_UART_ENABLE_IT(&huart, UART_IT_IDLE);
 	return *this;
 }
 
 /*
- * @brief		´®¿ÚÏà¹ØÍâÉè³õÊ¼»¯
- * @param		*uartHandle		:	´®¿Ú¾ä±ú
+ * @brief		ä¸²å£ç›¸å…³å¤–è®¾åˆå§‹åŒ–
+ * @param		*uartHandle		:	ä¸²å£å¥æŸ„
 */
 void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 {
@@ -87,8 +87,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 		PG9     ------> USART6_RX
 		*/
 		GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
-		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;//ÍÆÍì¸´ÓÃ¹¦ÄÜ
-		GPIO_InitStruct.Pull = GPIO_PULLUP;//ÉÏÀ­
+		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;//æ¨æŒ½å¤ç”¨åŠŸèƒ½
+		GPIO_InitStruct.Pull = GPIO_PULLUP;//ä¸Šæ‹‰
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 		GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -190,7 +190,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 
 		/* USART6 interrupt Init */
 		HAL_NVIC_SetPriority(USART2_IRQn, 6, 0);
-		HAL_NVIC_EnableIRQ(USART2_IRQn);//ÖĞ¶ÏÊ¹ÄÜ£¬½ÓÊÕµ½8Î»Êı¾İ¾ÍÖĞ¶ÏÒ»´Î
+		HAL_NVIC_EnableIRQ(USART2_IRQn);//ä¸­æ–­ä½¿èƒ½ï¼Œæ¥æ”¶åˆ°8ä½æ•°æ®å°±ä¸­æ–­ä¸€æ¬¡
 
 		/* DMA interrupt init */
 		/* DMA2_Stream1_IRQn interrupt configuration */
@@ -499,7 +499,7 @@ extern "C" void USART6_IRQHandler(void)
 extern "C" void DMA1_Stream2_IRQHandler(void)
 {
 }
-extern "C" void DMA1_Stream4_IRQHandler(void)//·¢ËÍÖĞ¶Ï
+extern "C" void DMA1_Stream4_IRQHandler(void)//å‘é€ä¸­æ–­
 {
 	uart4.OnDMAITHandler();
 }

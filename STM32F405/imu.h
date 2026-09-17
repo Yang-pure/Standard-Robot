@@ -33,6 +33,7 @@ private:
 	Angle angle;
 	AngularVelocity angularvelocity;
 	Acceleration acceleration;
+	float accelerationData[3]{};
 	uint16_t crc, len;
 	IMU_TYPE type;
 

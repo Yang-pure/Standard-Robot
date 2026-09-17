@@ -12,15 +12,15 @@ enum E_ENABLE {
 };
 
 enum E_LOOP {
-	REAL_POWER_LOOP = 0,		/* !µ×ÅÌ!ÓĞµçÁ÷²ÉÑù°å(Ó¢ĞÛºÍ²½±ø)£¬Ê¹ÓÃµçÁ÷²ÉÑù°åµÄ²ÉÑù¹¦ÂÊ½øĞĞµç»ú¹¦ÂÊ¿ØÖÆ */
-	REMAIN_ENERGY_LOOP = 1	/* !µ×ÅÌ!ÎŞµçÈİÓëµçÁ÷²ÉÑù°å(ÉÚ±ø)£¬Ê¹ÓÃ²ÃÅĞÏµÍ³¹©µç£¬Ê¹ÓÃÊ£ÓàÄÜÁ¿½øĞĞµç»ú¹¦ÂÊ¿ØÖÆ */
+	REAL_POWER_LOOP = 0,		/* !åº•ç›˜!æœ‰ç”µæµé‡‡æ ·æ¿(è‹±é›„å’Œæ­¥å…µ)ï¼Œä½¿ç”¨ç”µæµé‡‡æ ·æ¿çš„é‡‡æ ·åŠŸç‡è¿›è¡Œç”µæœºåŠŸç‡æ§åˆ¶ */
+	REMAIN_ENERGY_LOOP = 1	/* !åº•ç›˜!æ— ç”µå®¹ä¸ç”µæµé‡‡æ ·æ¿(å“¨å…µ)ï¼Œä½¿ç”¨è£åˆ¤ç³»ç»Ÿä¾›ç”µï¼Œä½¿ç”¨å‰©ä½™èƒ½é‡è¿›è¡Œç”µæœºåŠŸç‡æ§åˆ¶ */
 };
 
 typedef enum {
-	WORKING = 0, //Õı³£¹¤×÷
-	DISCHARGE, //¼ìÂ¼Ê±·Åµç
-	SHUT, //µ×ÅÌ¶ÏµçÊ±¹Ø±ÕPWM
-} working_state; //¹¤×÷×´Ì¬
+	WORKING = 0, //æ­£å¸¸å·¥ä½œ
+	DISCHARGE, //æ£€å½•æ—¶æ”¾ç”µ
+	SHUT, //åº•ç›˜æ–­ç”µæ—¶å…³é—­PWM
+} working_state; //å·¥ä½œçŠ¶æ€
 
 struct RxSurPacket
 {
@@ -30,16 +30,16 @@ struct RxSurPacket
 	float cap_energy;
 	float U;
 	float I;
-	
+
 };
 
 struct TxSurPacket
 {
-	uint8_t header1 = 0x4A; //Ö¡Í·£¬0x4A 1
-	uint8_t header2 = 0x4B; //Ö¡Í·£¬0x4B 1
-	uint16_t limit; //¹¦ÂÊÉÏÏŞ 2
-	working_state state; //¹¤×÷×´Ì¬ 
-	uint8_t buffer; //»º³åÄÜÁ¿
+	uint8_t header1 = 0x4A; //å¸§å¤´ï¼Œ0x4A 1
+	uint8_t header2 = 0x4B; //å¸§å¤´ï¼Œ0x4B 1
+	uint16_t limit; //åŠŸç‡ä¸Šé™ 2
+	working_state state; //å·¥ä½œçŠ¶æ€
+	uint8_t buffer; //ç¼“å†²èƒ½é‡
 	uint8_t count;
 };
 
@@ -65,7 +65,7 @@ public:
 	working_state s = WORKING;
 	TxSurPacket Txsuper;
 	RxSurPacket Rxsuper;
-	
+
 	float I_pre;
 	int count;
 	bool connect = false;
@@ -75,14 +75,14 @@ public:
 
 	int update_cnt = 0;
 
-	/*<! ¹¦ÂÊÏà¹Ø±äÁ¿ ÎªÁË·½±ãµ÷ÊÔ ·ÅÔÚpublic */
+	/*<! åŠŸç‡ç›¸å…³å˜é‡ ä¸ºäº†æ–¹ä¾¿è°ƒè¯• æ”¾åœ¨public */
 	float RF_power;
 	float motor_power;
 	float remain_energy;
 	float motor_power_target;
 	float RF_power_target = 60.f;
 	float remain_energy_target = 0.f;
-	//ÒÔÏÂÊÇ·ìºÏµÄÎ÷½»ÀûÎïÆÖµÄ±äÁ¿Ãû
+	//ä»¥ä¸‹æ˜¯ç¼åˆçš„è¥¿äº¤åˆ©ç‰©æµ¦çš„å˜é‡å
 	float Pin, w, Icmd, Ct = 1.99688994e-6f, k1, k2;
 
 	template<typename Type>
@@ -97,28 +97,28 @@ public:
 	/*void Load_capChargeController(float(*pFunc)(const float current, const float target));
 	void Load_motorLimitController(float(*pFunc)(const float current, const float target));*/
 
-	/* Ö÷º¯Êı */
+	/* ä¸»å‡½æ•° */
 	void Control(float _RF_power, float _motor_power, float _remain_energy);
 
-	/* Éè¶¨Ä¿±ê²ÎÊı */
+	/* è®¾å®šç›®æ ‡å‚æ•° */
 	void Set_PE_Target();
 
-	/* »ñµÃµçÈİ³äµç¹©µç */
+	/* è·å¾—ç”µå®¹å……ç”µä¾›ç”µ */
 	float Get_capChargePower(void);
 
-	/* »ñµÃ¹¦ÂÊ¿ØÖÆÖµ */
+	/* è·å¾—åŠŸç‡æ§åˆ¶å€¼ */
 	float Get_limScale(void);
 
-	uint8_t motor_num=4; 					/*<! µ×ÅÌµç»úÊıÁ¿£¬¶æÂÖµ×ÅÌ = 8£¬ÂóÂÖµ×ÅÌ = 4  */
-	E_ENABLE cap_charge_enable; /*<! µçÈİ³äµç¿ª¹Ø */
-	E_LOOP control_loop = REMAIN_ENERGY_LOOP; // »ò REAL_POWER_LOOP   /*<! ÊµÊ±¹¦ÂÊ»·/Ê£ÓàÄÜÁ¿»· */
-	uint8_t ctrl_period=20;				/*<! ¿ØÖÆÖÜÆÚ,¹¦ÂÊÔ¤²âÓÃ µ¥Î»ms */
+	uint8_t motor_num=4; 					/*<! åº•ç›˜ç”µæœºæ•°é‡ï¼Œèˆµè½®åº•ç›˜ = 8ï¼Œéº¦è½®åº•ç›˜ = 4  */
+	E_ENABLE cap_charge_enable; /*<! ç”µå®¹å……ç”µå¼€å…³ */
+	E_LOOP control_loop = REMAIN_ENERGY_LOOP; // æˆ– REAL_POWER_LOOP   /*<! å®æ—¶åŠŸç‡ç¯/å‰©ä½™èƒ½é‡ç¯ */
+	uint8_t ctrl_period=20;				/*<! æ§åˆ¶å‘¨æœŸ,åŠŸç‡é¢„æµ‹ç”¨ å•ä½ms */
 	float power_sum_total = 0.0f;
-	int max_current_out=16000;			  /*<! ×î´óµçÁ÷Êä³öÖµ£¬½¨ÒéÉèÖÃºÍµçµ÷×î´óµçÁ÷ÖµÒ»ÖÂ£¬ÈçC620Îª16384 */
-	int max_power_out = 200; //×î´ó¹¦ÂÊÊä³öÖµ
+	int max_current_out=16000;			  /*<! æœ€å¤§ç”µæµè¾“å‡ºå€¼ï¼Œå»ºè®®è®¾ç½®å’Œç”µè°ƒæœ€å¤§ç”µæµå€¼ä¸€è‡´ï¼Œå¦‚C620ä¸º16384 */
+	int max_power_out = 200; //æœ€å¤§åŠŸç‡è¾“å‡ºå€¼
 
-	float cap_charge_power;		  /*<! µçÈİÔÊĞí³äµç¹¦ÂÊ */
-	float lim_scale;						/*<! ÏŞ·ù±ÈÀı£¬Ã¿¸öµç»úÊä³öÓ¦µ±³ËÒÔÕâ¸öÖµ */
+	float cap_charge_power;		  /*<! ç”µå®¹å…è®¸å……ç”µåŠŸç‡ */
+	float lim_scale;						/*<! é™å¹…æ¯”ä¾‹ï¼Œæ¯ä¸ªç”µæœºè¾“å‡ºåº”å½“ä¹˜ä»¥è¿™ä¸ªå€¼ */
 
 	//float(*capChargeController)(const float current, const float target);
 	//float(*motorLimitController)(const float current, const float target);

@@ -108,7 +108,7 @@ void RC::RC_Control() {
 			break;
 
 		case CONTROL::FIRE:
-	
+
 			break;
 
 		case CONTROL::STOP:
@@ -137,11 +137,6 @@ void RC::RC_Control() {
 		can1_motor[7].setspeed = 0;
 		can2_motor[0].setspeed = 0;
 		can2_motor[1].setspeed = 0;
-		can2_motor[2].setspeed = 0;
-		can2_motor[3].setspeed = 0;
-		can2_motor[4].setspeed = 0;
-		can2_motor[5].setspeed = 0;
-		can2_motor[6].setspeed = 0;
 		DMmotor[0].setSpeed = 0;
 		DMmotor[1].setSpeed = 0;
 		DMmotor[2].setSpeed = 0;
@@ -151,10 +146,10 @@ void RC::RC_Control() {
 void RC::Decode()
 {
 	if (queueHandler == NULL || *queueHandler == NULL) {
-		return;  // »òÕß±¨´í
+		return;  // æˆ–è€…æŠ¥é”™
 	}
 	else {
-		pd_Rx = xQueueReceive(*queueHandler, m_frame, NULL);
+		pd_Rx = xQueueReceive(*queueHandler, m_frame, 0);
 	}
 
 	if (sizeof(m_frame) < 18) return;
@@ -181,8 +176,8 @@ void RC::Decode()
 	pc.press_l = m_frame[12];
 	pc.press_r = m_frame[13];
 
-	pc.key_h = m_frame[15];//°´¼üµÄ¸ßÎ»²¿·ÖR F G Z X C 
-	pc.key_l = m_frame[14];//°´¼üµÄµÍ8Î» W S A D SHIFT CTRL Q E
+	pc.key_h = m_frame[15];//æŒ‰é”®çš„é«˜ä½éƒ¨åˆ†R F G Z X C
+	pc.key_l = m_frame[14];//æŒ‰é”®çš„ä½Ž8ä½ W S A D SHIFT CTRL Q E
 
 }
 

@@ -29,23 +29,34 @@
 #include "xuc.h"
 
 Motor can1_motor[CAN1_MOTOR_NUM] = {
-	Motor(M3508,SPD,chassis, ID1, PID(10.f, 0.0f, 1.5f,0.f)),
-	Motor(M2006,SPD,chassis, ID2, PID(10.f, 0.0f, 1.5f,0.f)),
-	Motor(M6020,POS,pantile, ID3, PID(40.f, 0.0f, 1.5f,0.f),PID(0.8f, 0.005f, 15.0f,0.f)),
-	Motor(M6020,POS,pantile, ID4, PID(40.f, 0.0f, 1.5f,0.f),PID(0.8f, 0.005f, 15.0f,0.f)),
-	Motor(M6020,POS,pantile, ID6, PID(40.f, 0.0f, 1.5f,0.f),PID(0.8f, 0.005f, 15.0f,0.f)),
-	Motor(M6020,SPD,chassis, ID8, PID(10.f, 0.0f, 1.5f,0.f))
+	// 底盘左前
+	Motor(M3508, SPD, chassis, ID1, PID(10.f, 0.0f, 1.5f, 0.f)),
+	// 底盘右前
+	Motor(M3508, SPD, chassis, ID2, PID(10.f, 0.0f, 1.5f, 0.f)),
+	// 底盘右后
+	Motor(M3508, SPD, chassis, ID3, PID(10.f, 0.0f, 1.5f, 0.f)),
+	// 底盘左后
+	Motor(M3508, SPD, chassis, ID4, PID(10.f, 0.0f, 1.5f, 0.f)),
+	// 云台 Yaw（硬件 ID1，工程 ID5）
+	Motor(M6020, POS, pantile, ID5, PID(40.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
+	// 右前履带
+	Motor(M2006, POS, chassis, ID6, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
+	// 左前履带
+	Motor(M2006, POS, chassis, ID7, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
+	// 拨弹轮
+	Motor(M2006, POS, supply, ID8, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f))
 };
 Motor can2_motor[CAN2_MOTOR_NUM] = {
-	Motor(M3508,SPD,chassis, ID1, PID(10.f, 0.0f, 1.5f,0.f)),
-	Motor(M2006,SPD,chassis, ID2, PID(10.f, 0.0f, 1.5f,0.f)),
-	Motor(M6020,POS,pantile, ID3, PID(40.f, 0.0f, 1.5f,0.f),PID(0.8f, 0.005f, 15.0f,0.f)),
-	Motor(M6020,POS,pantile, ID4, PID(40.f, 0.0f, 1.5f,0.f),PID(0.8f, 0.005f, 15.0f,0.f)),
-	Motor(M6020,POS,pantile, ID7, PID(40.f, 0.0f, 1.5f,0.f),PID(0.8f, 0.005f, 15.0f,0.f)),
-	Motor(M6020,SPD,chassis, ID8, PID(10.f, 0.0f, 1.5f,0.f))
+	// 左摩擦轮
+	Motor(M3508, SPD, shooter, ID1, PID(10.f, 0.0f, 1.5f, 0.f)),
+	// 右摩擦轮
+	Motor(M3508, SPD, shooter, ID2, PID(10.f, 0.0f, 1.5f, 0.f))
 };
-DMMOTOR DMmotor[1] = {
-	DMMOTOR(0x01, P_S, L_F),
+DMMOTOR DMmotor[3] = {
+	// 两个后腿 DM4340 与 Pitch DM4310 的具体 ID 待人工检查
+	DMMOTOR(DM_ID3, P_S, L_B),
+	DMMOTOR(DM_ID4, P_S, R_B),
+	DMMOTOR(DM_ID5, P_S, F_B)
 };
 
 
@@ -82,20 +93,13 @@ int main(void)
 	para.Init();
 
 	ctrl.Init(std::vector<Motor*>{
-		&can2_motor[0],
-			& can2_motor[1],
-			& can2_motor[2],
-			& can2_motor[3],
-			& can2_motor[4],
-			& can2_motor[5]
-	});
-	ctrl.Init(std::vector<Motor*>{
 		&can1_motor[0],
-			& can1_motor[1],
-			& can1_motor[2],
-			& can1_motor[3],
-			& can1_motor[4],
-			& can1_motor[5]
+		&can1_motor[1],
+		&can1_motor[2],
+		&can1_motor[3],
+		&can1_motor[4],
+		&can2_motor[0],
+		&can2_motor[1]
 	});
 
 	task.Init();

@@ -4,12 +4,12 @@
 #include "queue.h"
 
 /*
-Í·ÎÄ¼şÖĞ²»Òª½øĞĞÈ«¾Ö±äÁ¿¶¨Òå£¬¿É½øĞĞºê¶¨Òå
-È«¾Ö±äÁ¿ÓÃexternÉùÃ÷£¬±ÜÃâÍ·ÎÄ¼ş¶à´ÎÒıÓÃmultiple defined
+å¤´æ–‡ä»¶ä¸­ä¸è¦è¿›è¡Œå…¨å±€å˜é‡å®šä¹‰ï¼Œå¯è¿›è¡Œå®å®šä¹‰
+å…¨å±€å˜é‡ç”¨externå£°æ˜ï¼Œé¿å…å¤´æ–‡ä»¶å¤šæ¬¡å¼•ç”¨multiple defined
 */
 
-#define CAN1_MOTOR_NUM 6
-#define CAN2_MOTOR_NUM 6
+#define CAN1_MOTOR_NUM 8
+#define CAN2_MOTOR_NUM 2
 
 #define CHASSIS_MOTOR_NUM 4
 #define PANTILE_MOTOR_NUM 2
@@ -42,36 +42,36 @@ public:
 };
 
 
-//ÈÎÎñÓÅÏÈ¼¶
+//ä»»åŠ¡ä¼˜å…ˆçº§
 #define START_TASK_PRIO		1
-//ÈÎÎñ¶ÑÕ»´óĞ¡	
-#define START_STK_SIZE 		128  
-//ÈÎÎñ¾ä±ú
+//ä»»åŠ¡å †æ ˆå¤§å°
+#define START_STK_SIZE 		128
+//ä»»åŠ¡å¥æŸ„
 extern TaskHandle_t StartTask_Handler;
-//ÈÎÎñº¯Êı
+//ä»»åŠ¡å‡½æ•°
 
 #define LED_TASK_PRIO		1
-#define LED_STK_SIZE 		128  
+#define LED_STK_SIZE 		128
 extern TaskHandle_t LedTask_Handler;
 
 #define DECODE_TASK_PRIO		3
-#define DECODE_STK_SIZE 		128  
+#define DECODE_STK_SIZE 		128
 extern TaskHandle_t DecodeTask_Handler;
 
-#define RC_TASK_PRIO		3	
-#define RC_STK_SIZE 		256  
+#define RC_TASK_PRIO		3
+#define RC_STK_SIZE 		256
 extern TaskHandle_t RcTask_Handler;
 
 #define CONTROL_TASK_PRIO		2
-#define CONTROL_STK_SIZE 		128  
+#define CONTROL_STK_SIZE 		128
 extern TaskHandle_t ControlTask_Handler;
 
 #define MOTOR_TASK_PRIO		2
-#define MOTOR_STK_SIZE 		256  
+#define MOTOR_STK_SIZE 		256
 extern TaskHandle_t MotorTask_Handler;
 
 #define CANTX_TASK_PRIO		2
-#define CANTX_STK_SIZE 		256 
+#define CANTX_STK_SIZE 		256
 extern TaskHandle_t CanTxTask_Handler;
 
 extern PARAMETER para;
