@@ -1,10 +1,11 @@
 #include "motor.h"
-#include "gpio.h"
-#include "HTmotor.h"
-#include "imu.h"
 #define DEG_TO_RAD 0.017453292f  // π / 180
+
+//构造函数成员初始化列表
+//Motor::Motor是构造函数：创建一个Motor对象时执行。
+//冒号后面用于初始化这个对象的成员，花括号里面是随后执行的函数体。
 Motor::Motor(const motor_type type, const motor_mode mode, const function_type function, const uint32_t id, PID _speed, PID _position, PID _speed2)
-	: ID(id)
+	: ID(id)//用参数id初始化成员ID
 	, type(type)
 	, mode(mode)
 {
@@ -15,7 +16,7 @@ Motor::Motor(const motor_type type, const motor_mode mode, const function_type f
 	this->function = function;
 }
 
-
+//构造函数重载
 Motor::Motor(const motor_type type, const motor_mode mode, const function_type function, const uint32_t id, PID _speed, PID _position)
 	: ID(id)
 	, type(type)
@@ -50,6 +51,8 @@ void Motor::StatusIdentifier(int32_t torque_current)
 		if (old_torque_current == 0)
 			m_status = UNCONNECTED;
 		else
+			// 连续相同值达到阈值且旧值非零时，代码将状态置为DISCONNECTED。
+			// 此算法只检查数值变化，不能可靠判断是否收到新反馈。
 			m_status = DISCONNECTED;
 	}
 	else
@@ -71,6 +74,7 @@ void Motor::Ontimer(uint8_t idata[][8], uint8_t* odata)//idate: receive;odate: t
 		trainsmit_or_receive_ID += 4;
 	}*/
 	//----------------------------------------------------------------
+	//由DJI官方规定的通信协议对收包的八个字节分别分析
 	this->torque_current = getword(idata[trainsmit_or_receive_ID][4], idata[trainsmit_or_receive_ID][5]);
 	this->StatusIdentifier(this->torque_current);
 	this->angle[now] = getword(idata[trainsmit_or_receive_ID][0], idata[trainsmit_or_receive_ID][1]);
@@ -78,15 +82,23 @@ void Motor::Ontimer(uint8_t idata[][8], uint8_t* odata)//idate: receive;odate: t
 	//Get currrent speed
 
 	motor_status = 0;
+
+	//过温保护
 	if (temperature > 70) {
 		setspeed = 0;
 	}
 
+	//获取当前速度
 	if (type == EC60)
 	{
+		/*Δcount             编码计数
+			÷ 8192          转过多少圈
+			÷ T             每秒多少圈  
+			× 60            每分钟多少圈，即rpm(每分钟转数)*/
 		curspeed = static_cast<float>(getdeltaa(angle[now] - angle[pre])) / T / 8192.f * 60.f;
 	}
 	else {
+		//getword把前面高低八位的数据整合到一起为完整速度，
 		curspeed = getword(idata[trainsmit_or_receive_ID][2], idata[trainsmit_or_receive_ID][3]);
 	}
 	//----------------------------------------------------------------
@@ -96,6 +108,7 @@ void Motor::Ontimer(uint8_t idata[][8], uint8_t* odata)//idate: receive;odate: t
 	}*/
 	//----------------------------------------------------------------
 	//20220121--hz
+	//模式设置，待分工编写
 	if (mode == ACE)
 	{
 
@@ -124,21 +137,35 @@ void Motor::Ontimer(uint8_t idata[][8], uint8_t* odata)//idate: receive;odate: t
 			current = 0;
 		}
 	}
+
+	//位置环
 	else if (mode == POS)
 	{
-
+		setspeed = pid[position].Position(setangle - angle[now], pid[position].max_limit);
 	}
+	//速度环
 	else if (mode == SPD)
 	{
-
+		/*if (type == M2006 && (ID == ID6 || ID == ID7))
+		{
+			current = 1000;
+		}*/
+		setcurrent = pid[speed].Position(setspeed - curspeed, pid[speed].max_limit);
+		current = setcurrent;
 	}
+	//记录总的编码值sum_angle
 	recorded_the_Laps();
+	//将机械角度转为距离
 	GetDistanceFromMechanicalAngle();
+	//角度更新
 	angle[pre] = angle[now];
+	//电流限幅
 	current = setrange(current, maxcurrent);
+	//根据DJI规定的发送通信协议，给对应ID的电机写入电流
 	odata[trainsmit_or_receive_ID * 2] = (current & 0xff00) >> 8;//高八位
 	odata[trainsmit_or_receive_ID * 2 + 1] = current & 0x00ff;
 }
+//记录有符号的总的编码值sum_angle
 void Motor::recorded_the_Laps() {
 	int16_t delta = angle[now] - angle[pre];
 	// 处理回绕：顺时针
@@ -153,9 +180,14 @@ void Motor::recorded_the_Laps() {
 }
 
 uint8_t initial_cnt=0;
+
+// 根据累计编码值、减速比和轮半径估算线位移，
+// 再减去起点偏移initial_x。
+// 当前初始化计数为多电机共享，且起点赋值逻辑有待修正。
 void Motor::GetDistanceFromMechanicalAngle() {
 	if (initial_cnt<5)
 	initial_cnt++;
+	
 	distance=(6.2831853f/ 8192.0f)*sum_angle * (WHEEL_RADIUS_MM / GEAR_RATIO)-initial_x;  // 单位：mm
 
 	if(initial_cnt<3)

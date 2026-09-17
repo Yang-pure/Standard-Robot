@@ -40,6 +40,11 @@ private:
 	void getmax(const type_t type);
 	void StatusIdentifier(int32_t torque_current);
 	void GetDistanceFromMechanicalAngle();
+	void UpdateSpeedControl();
+	void UpdatePositionControl();
+	void ResetControl();
+	bool angle_initialized = false;
+	int32_t previous_mode = -1;
 	static int16_t getword(const uint8_t high, const uint8_t low);
 	static int32_t setrange(const int32_t original, const int32_t range);
 	type_t type;
@@ -57,7 +62,7 @@ public:
 	int32_t mode{};
 	int round_count;
 	bool pd = 0, spinning = 0;//pd:单次拨弹 spinning:一秒八发
-	PID pid[2];
+	PID pid[3]; // speed、position、speed2，与三种构造函数对应
 	float Torque_constant_2006 = (0.18*10)/10000;
 	float setangle{}, angle[2]{},distance{}, initial_x{}, rota_angle{}, reset_rota_angle{}, delta_angle{};
 	float Torque_left;

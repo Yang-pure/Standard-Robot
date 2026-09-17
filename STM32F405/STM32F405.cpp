@@ -40,11 +40,11 @@ Motor can1_motor[CAN1_MOTOR_NUM] = {
 	// 云台 Yaw（硬件 ID1，工程 ID5）
 	Motor(M6020, POS, pantile, ID5, PID(40.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
 	// 右前履带
-	Motor(M2006, POS, chassis, ID6, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
+	Motor(M2006, SPD, chassis, ID6, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
 	// 左前履带
-	Motor(M2006, POS, chassis, ID7, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
+	Motor(M2006, SPD, chassis, ID7, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f)),
 	// 拨弹轮
-	Motor(M2006, POS, supply, ID8, PID(10.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f))
+	Motor(M2006, POS, supply, ID8, PID(0.f, 0.0f, 1.5f, 0.f), PID(0.8f, 0.005f, 15.0f, 0.f))
 };
 Motor can2_motor[CAN2_MOTOR_NUM] = {
 	// 左摩擦轮
